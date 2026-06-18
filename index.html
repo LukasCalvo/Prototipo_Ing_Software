@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestión Aduanera</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-layout">
+        <nav class="sidebar" aria-label="Menú principal de navegación">
+            <div class="logo">
+                <h1>Aduanas Chile</h1>
+            </div>
+            <ul class="nav-links">
+                <li><button class="nav-btn active" data-target="dashboard" aria-current="page">Dashboard</button></li>
+                <li><button class="nav-btn" data-target="vehiculos">Registro de Vehículos</button></li>
+                <li><button class="nav-btn" data-target="tramites">Nuevo Trámite</button></li>
+                <li><button class="nav-btn" data-target="documentos">Gestión Documental</button></li>
+                <li><button class="nav-btn" data-target="sag">Declaración SAG</button></li>
+            </ul>
+        </nav>
+
+        <main class="main-content" aria-live="polite">
+            
+            <section id="dashboard" class="module active">
+                <h2>Dashboard de Estado</h2>
+                <div class="table-responsive">
+                    <table class="status-table">
+                        <caption class="sr-only">Seguimiento de trámites aduaneros</caption>
+                        <thead>
+                            <tr>
+                                <th>ID Trámite</th>
+                                <th>Tipo</th>
+                                <th>Fecha</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#ADU-1024</td>
+                                <td>Salida Temporal Vehículo</td>
+                                <td>18/06/2026</td>
+                                <td><span class="badge badge-pending">Pendiente</span></td>
+                            </tr>
+                            <tr>
+                                <td>#ADU-1023</td>
+                                <td>Declaración SAG</td>
+                                <td>17/06/2026</td>
+                                <td><span class="badge badge-validation">En Validación</span></td>
+                            </tr>
+                            <tr>
+                                <td>#ADU-1020</td>
+                                <td>Admisión Temporal</td>
+                                <td>15/06/2026</td>
+                                <td><span class="badge badge-approved">Aprobado</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="vehiculos" class="module hidden">
+                <h2>Registro de Vehículos</h2>
+                <form class="legal-form" id="form-vehiculos" novalidate>
+                    <fieldset>
+                        <legend>Datos del Trámite y Vehículo</legend>
+                        
+                        <div class="form-group">
+                            <label for="tipo-tramite">Tipo de Trámite (Máx 180 días)</label>
+                            <select id="tipo-tramite" name="tipoTramite" required aria-required="true">
+                                <option value="">Seleccione una opción</option>
+                                <option value="salida">Salida Temporal (Hacia Argentina)</option>
+                                <option value="admision">Admisión Temporal (Desde Argentina)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="patente">Patente / Matrícula</label>
+                            <input type="text" id="patente" name="patente" required aria-required="true" placeholder="Ej: AB123CD">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="propietario">Nombre del Propietario</label>
+                            <input type="text" id="propietario" name="propietario" required aria-required="true">
+                        </div>
+                    </fieldset>
+                    <button type="submit" class="btn-primary">Continuar y Revisar</button>
+                </form>
+            </section>
+
+            <section id="sag" class="module hidden">
+                <h2>Declaración Jurada SAG</h2>
+                <div class="alert alert-info" role="alert">
+                    <p>Obligatorio: Indique si porta productos de origen animal o vegetal.</p>
+                </div>
+                <form class="legal-form" id="form-sag" novalidate>
+                    <fieldset>
+                        <legend>Declaración de Productos</legend>
+                        
+                        <div class="form-group checkbox-group">
+                            <input type="checkbox" id="porta-vegetal" name="portaVegetal">
+                            <label for="porta-vegetal">Porto productos de origen vegetal (frutas, semillas, etc.)</label>
+                        </div>
+
+                        <div class="form-group checkbox-group">
+                            <input type="checkbox" id="porta-animal" name="portaAnimal">
+                            <label for="porta-animal">Porto productos de origen animal (carnes, lácteos, etc.)</label>
+                        </div>
+
+                        <div class="form-group sworn-declaration">
+                            <input type="checkbox" id="juramento" name="juramento" required aria-required="true">
+                            <label for="juramento"><strong>Declaro bajo juramento que los datos proporcionados son verdaderos.</strong></label>
+                        </div>
+                    </fieldset>
+                    <button type="submit" class="btn-primary">Firmar y Revisar</button>
+                </form>
+            </section>
+
+            <section id="documentos" class="module hidden">
+                <h2>Gestión de Documentos</h2>
+                <form class="file-form" id="form-docs">
+                    <div class="form-group">
+                        <label for="file-upload">Cargar documento (PDF, JPG)</label>
+                        <input type="file" id="file-upload" name="fileUpload" accept=".pdf, .jpg, .jpeg" aria-describedby="file-help">
+                        <small id="file-help">Tamaño máximo 5MB. Los formularios PDF se generarán automáticamente.</small>
+                    </div>
+                    <button type="button" class="btn-secondary">Subir y Generar PDF</button>
+                </form>
+            </section>
+
+            <section id="tramites" class="module hidden">
+                <h2>Completar Declaraciones Aduaneras</h2>
+                <p>Módulo en construcción para flujo de nuevos trámites.</p>
+            </section>
+        </main>
+    </div>
+
+    <div class="modal-overlay hidden" id="confirm-modal" role="dialog" aria-labelledby="modal-title" aria-modal="true">
+        <div class="modal-content">
+            <h3 id="modal-title">Revisión y Confirmación</h3>
+            <p>Por favor, revise que los datos ingresados sean correctos antes de realizar el envío legal.</p>
+            <div id="modal-data-review" class="review-box" tabindex="0">
+                </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" id="btn-cancel">Corregir Datos</button>
+                <button type="button" class="btn-primary" id="btn-confirm">Confirmar y Enviar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
