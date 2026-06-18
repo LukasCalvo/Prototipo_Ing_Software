@@ -7,7 +7,6 @@
     --border-color: #cccccc;
     --focus-color: #ff9900;
     
-    /* Colores de estado con contraste seguro */
     --status-pending: #856404;
     --status-pending-bg: #fff3cd;
     --status-valid: #004085;
@@ -82,7 +81,7 @@ fieldset { border: 1px solid var(--border-color); padding: 1.5rem; margin-bottom
 legend { padding: 0 0.5rem; font-weight: bold; color: var(--primary-color); }
 .form-group { margin-bottom: 1rem; display: flex; flex-direction: column; }
 label { margin-bottom: 0.5rem; font-weight: 600; }
-input[type="text"], select, input[type="file"] {
+input[type="text"], select, input[type="file"], textarea {
     padding: 0.75rem;
     border: 1px solid #767676;
     border-radius: 4px;
@@ -152,4 +151,61 @@ input[type="text"], select, input[type="file"] {
     .nav-links { display: flex; overflow-x: auto; white-space: nowrap; }
     .nav-btn { text-align: center; border-left: none; border-bottom: 4px solid transparent; }
     .nav-btn.active { border-left: none; border-bottom: 4px solid var(--focus-color); }
+}
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: var(--primary-color);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 2000;
+}
+
+.login-container.hidden {
+    display: none;
+}
+
+.login-form {
+    background: var(--white);
+    padding: 3rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    width: 100%;
+    max-width: 400px;
+}
+
+.login-form h2 {
+    text-align: center;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+}
+
+.login-form .logo h1 {
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.login-form input[type="text"], 
+.login-form input[type="password"] {
+    width: 100%;
+}
+
+.btn-block {
+    width: 100%;
+    margin-top: 1rem;
+    font-size: 1.1rem;
+}
+
+.app-layout.hidden {
+    display: none !important;
+}
+
+.sidebar.hidden {
+    display: none !important;
 }

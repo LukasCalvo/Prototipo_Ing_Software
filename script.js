@@ -1,25 +1,76 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const navButtons = document.querySelectorAll('.nav-btn');
-    const modules = document.querySelectorAll('.module');
 
-    navButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            // Actualizar botones
+    const loginForm = document.getElementById('login-form');
+    const loginScreen = document.getElementById('login-screen');
+    const mainApp = document.getElementById('main-app');
+    
+    const userSidebar = document.getElementById('user-sidebar');
+    const adminSidebar = document.getElementById('admin-sidebar');
+    const roleSelect = document.getElementById('role');
+    
+    const allModules = document.querySelectorAll('.module');
+    const navButtons = document.querySelectorAll('.nav-btn');
+
+    if (loginForm) {
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault(); 
+            
+            if (!loginForm.checkValidity()) {
+                loginForm.reportValidity();
+                return;
+            }
+
+            const selectedRole = roleSelect.value;
+
+            allModules.forEach(mod => mod.classList.add('hidden'));
             navButtons.forEach(b => {
                 b.classList.remove('active');
                 b.removeAttribute('aria-current');
             });
+
+            if (selectedRole === 'admin') {
+                userSidebar.classList.add('hidden');
+                adminSidebar.classList.remove('hidden'); 
+                
+                document.getElementById('admin-validar').classList.remove('hidden');
+                document.querySelector('[data-target="admin-validar"]').classList.add('active');
+
+            } else {
+                adminSidebar.classList.add('hidden');
+                userSidebar.classList.remove('hidden');
+
+                document.getElementById('dashboard').classList.remove('hidden');
+                document.querySelector('[data-target="dashboard"]').classList.add('active');
+            }
+
+            loginScreen.classList.add('hidden');
+            mainApp.classList.remove('hidden');
+        });
+    }
+
+    navButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const parentSidebar = btn.closest('.sidebar');
+
+            if (parentSidebar && parentSidebar.classList.contains('hidden')) {
+                return; 
+            }
+
+            parentSidebar.querySelectorAll('.nav-btn').forEach(b => {
+                b.classList.remove('active');
+                b.removeAttribute('aria-current');
+            });
+
             btn.classList.add('active');
             btn.setAttribute('aria-current', 'page');
 
+            allModules.forEach(mod => mod.classList.add('hidden'));
+
             const targetId = btn.getAttribute('data-target');
-            modules.forEach(mod => {
-                if(mod.id === targetId) {
-                    mod.classList.remove('hidden');
-                } else {
-                    mod.classList.add('hidden');
-                }
-            });
+            const targetModule = document.getElementById(targetId);
+            if (targetModule) {
+                targetModule.classList.remove('hidden');
+            }
         });
     });
 
@@ -27,8 +78,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnCancel = document.getElementById('btn-cancel');
     const btnConfirm = document.getElementById('btn-confirm');
     const reviewDataContainer = document.getElementById('modal-data-review');
+
+    const formsToConfirm = [
+        document.getElementById('form-vehiculos'), 
+        document.getElementById('form-sag'), 
+        document.getElementById('form-nuevo-tramite'),
+        document.getElementById('form-permisos')
+    ];
     
-    const formsToConfirm = [document.getElementById('form-vehiculos'), document.getElementById('form-sag')];
     let currentForm = null;
 
     formsToConfirm.forEach(form => {
@@ -36,7 +93,6 @@ document.addEventListener('DOMContentLoaded', () => {
         form.addEventListener('submit', (e) => {
             e.preventDefault();
             
-            // Validación nativa básica
             if (!form.checkValidity()) {
                 form.reportValidity();
                 return;
@@ -53,7 +109,9 @@ document.addEventListener('DOMContentLoaded', () => {
         let reviewHTML = '<ul>';
         for (let [key, value] of formData.entries()) {
             if(value === 'on') value = 'Sí';
-            reviewHTML += `<li><strong>${formatLabel(key)}:</strong> ${value}</li>`;
+            if(value.trim() !== '') {
+                reviewHTML += `<li><strong>${formatLabel(key)}:</strong> ${value}</li>`;
+            }
         }
         reviewHTML += '</ul>';
         reviewDataContainer.innerHTML = reviewHTML;
@@ -73,18 +131,25 @@ document.addEventListener('DOMContentLoaded', () => {
         currentForm = null;
     }
 
-    btnCancel.addEventListener('click', closeModal);
+    // Botones del Modal
+    if(btnCancel) btnCancel.addEventListener('click', closeModal);
     
-    btnConfirm.addEventListener('click', () => {
-        alert('Trámite confirmado y enviado exitosamente a los servidores de Aduanas.');
-        closeModal();
-        if(currentForm) currentForm.reset();
-        
-        navButtons[0].click(); 
-    });
+    if(btnConfirm) {
+        btnConfirm.addEventListener('click', () => {
+            alert('Acción confirmada y procesada exitosamente.');
+            closeModal();
+            if(currentForm) currentForm.reset();
+            
+            if(roleSelect.value === 'user') {
+                document.querySelector('[data-target="dashboard"]').click(); 
+            } else {
+                document.querySelector('[data-target="admin-validar"]').click();
+            }
+        });
+    }
 
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+        if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
             closeModal();
         }
     });

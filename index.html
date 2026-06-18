@@ -7,13 +7,44 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="app-layout">
-        <nav class="sidebar" aria-label="Menú principal de navegación">
+
+    <div id="login-screen" class="login-container">
+        <form id="login-form" class="login-form" novalidate>
+            <div class="logo">
+                <h1>Aduanas Chile</h1>
+            </div>
+            <h2>Iniciar Sesión</h2>
+            
+            <div class="form-group">
+                <label for="role">Tipo de Perfil</label>
+                <select id="role" name="role" required aria-required="true">
+                    <option value="user">Usuario</option>
+                    <option value="admin">Administrador</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="rut">Usuario (RUT)</label>
+                <input type="text" id="rut" name="rut" required aria-required="true" placeholder="Ej: 12.345.678-9">
+            </div>
+
+            <div class="form-group">
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" name="password" required aria-required="true">
+            </div>
+
+            <button type="submit" class="btn-primary btn-block">Ingresar al Sistema</button>
+        </form>
+    </div>
+
+    <div class="app-layout hidden" id="main-app">
+        
+        <nav class="sidebar" id="user-sidebar" aria-label="Menú de usuario" tabindex="-1">
             <div class="logo">
                 <h1>Aduanas Chile</h1>
             </div>
             <ul class="nav-links">
-                <li><button class="nav-btn active" data-target="dashboard" aria-current="page">Dashboard</button></li>
+                <li><button class="nav-btn active" data-target="dashboard" aria-current="page">Trámites</button></li>
                 <li><button class="nav-btn" data-target="vehiculos">Registro de Vehículos</button></li>
                 <li><button class="nav-btn" data-target="tramites">Nuevo Trámite</button></li>
                 <li><button class="nav-btn" data-target="documentos">Gestión Documental</button></li>
@@ -21,39 +52,49 @@
             </ul>
         </nav>
 
+        <nav class="sidebar hidden" id="admin-sidebar" aria-label="Menú de administrador" tabindex="-1">
+            <div class="logo">
+                <h1>Aduanas Chile</h1>
+            </div>
+            <ul class="nav-links">
+                <li><button class="nav-btn active" data-target="admin-validar" aria-current="page">Validar Formularios</button></li>
+                <li><button class="nav-btn" data-target="admin-permisos">Controlar Permisos</button></li>
+            </ul>
+        </nav>
+
         <main class="main-content" aria-live="polite">
             
             <section id="dashboard" class="module active">
-                <h2>Dashboard de Estado</h2>
+                <h2>Consultar Estado de Trámites</h2>
                 <div class="table-responsive">
                     <table class="status-table">
                         <caption class="sr-only">Seguimiento de trámites aduaneros</caption>
                         <thead>
                             <tr>
-                                <th>ID Trámite</th>
-                                <th>Tipo</th>
-                                <th>Fecha</th>
                                 <th>Estado</th>
+                                <th>Fecha</th>
+                                <th>Tipo</th>
+                                <th>ID Trámite</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>#ADU-1024</td>
-                                <td>Salida Temporal Vehículo</td>
-                                <td>18/06/2026</td>
                                 <td><span class="badge badge-pending">Pendiente</span></td>
+                                <td>18/06/2026</td>
+                                <td>Salida Temporal Vehículo</td>
+                                <td>#ADU-1024</td>
                             </tr>
                             <tr>
-                                <td>#ADU-1023</td>
-                                <td>Declaración SAG</td>
+                                <td><span class="badge badge-validation">En Revisión</span></td>
                                 <td>17/06/2026</td>
-                                <td><span class="badge badge-validation">En Validación</span></td>
+                                <td>Declaración SAG</td>
+                                <td>#ADU-1023</td>
                             </tr>
                             <tr>
-                                <td>#ADU-1020</td>
-                                <td>Admisión Temporal</td>
-                                <td>15/06/2026</td>
                                 <td><span class="badge badge-approved">Aprobado</span></td>
+                                <td>15/06/2026</td>
+                                <td>Admisión Temporal</td>
+                                <td>#ADU-1020</td>
                             </tr>
                         </tbody>
                     </table>
@@ -65,7 +106,6 @@
                 <form class="legal-form" id="form-vehiculos" novalidate>
                     <fieldset>
                         <legend>Datos del Trámite y Vehículo</legend>
-                        
                         <div class="form-group">
                             <label for="tipo-tramite">Tipo de Trámite (Máx 180 días)</label>
                             <select id="tipo-tramite" name="tipoTramite" required aria-required="true">
@@ -74,12 +114,10 @@
                                 <option value="admision">Admisión Temporal (Desde Argentina)</option>
                             </select>
                         </div>
-
                         <div class="form-group">
                             <label for="patente">Patente / Matrícula</label>
                             <input type="text" id="patente" name="patente" required aria-required="true" placeholder="Ej: AB123CD">
                         </div>
-
                         <div class="form-group">
                             <label for="propietario">Nombre del Propietario</label>
                             <input type="text" id="propietario" name="propietario" required aria-required="true">
@@ -92,22 +130,23 @@
             <section id="sag" class="module hidden">
                 <h2>Declaración Jurada SAG</h2>
                 <div class="alert alert-info" role="alert">
-                    <p>Obligatorio: Indique si porta productos de origen animal o vegetal.</p>
+                    <p>Obligatorio: Indique si porta productos de origen animal o vegetal y detállelos a continuación.</p>
                 </div>
                 <form class="legal-form" id="form-sag" novalidate>
                     <fieldset>
                         <legend>Declaración de Productos</legend>
-                        
                         <div class="form-group checkbox-group">
                             <input type="checkbox" id="porta-vegetal" name="portaVegetal">
                             <label for="porta-vegetal">Porto productos de origen vegetal (frutas, semillas, etc.)</label>
                         </div>
-
                         <div class="form-group checkbox-group">
                             <input type="checkbox" id="porta-animal" name="portaAnimal">
                             <label for="porta-animal">Porto productos de origen animal (carnes, lácteos, etc.)</label>
                         </div>
-
+                        <div class="form-group">
+                            <label for="detalle-productos">Especifique los productos a ingresar (Opcional si no porta nada)</label>
+                            <textarea id="detalle-productos" name="detalleProductos" rows="3" placeholder="Ej: Manzanas, queso curado..."></textarea>
+                        </div>
                         <div class="form-group sworn-declaration">
                             <input type="checkbox" id="juramento" name="juramento" required aria-required="true">
                             <label for="juramento"><strong>Declaro bajo juramento que los datos proporcionados son verdaderos.</strong></label>
@@ -130,9 +169,91 @@
             </section>
 
             <section id="tramites" class="module hidden">
-                <h2>Completar Declaraciones Aduaneras</h2>
-                <p>Módulo en construcción para flujo de nuevos trámites.</p>
+                <h2>Completar Declaración Aduanera</h2>
+                <form class="legal-form" id="form-nuevo-tramite" novalidate>
+                    <fieldset>
+                        <legend>Detalle de la Declaración</legend>
+                        <div class="form-group">
+                            <label for="tipo-operacion">Tipo de Operación</label>
+                            <select id="tipo-operacion" name="tipoOperacion" required aria-required="true">
+                                <option value="">Seleccione el tipo de operación</option>
+                                <option value="importacion">Importación</option>
+                                <option value="exportacion">Exportación</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="descripcion-mercancia">Descripción de la Mercancía</label>
+                            <input type="text" id="descripcion-mercancia" name="descripcionMercancia" required aria-required="true" placeholder="Ej: Repuestos de maquinaria agrícola">
+                        </div>
+                        <div class="form-group">
+                            <label for="valor-aduanero">Valor Aduanero Declarado (USD)</label>
+                            <input type="number" id="valor-aduanero" name="valorAduanero" required aria-required="true" min="1" placeholder="Ej: 1500">
+                        </div>
+                        <div class="form-group">
+                            <label for="pais-origen">País de Origen / Destino</label>
+                            <input type="text" id="pais-origen" name="paisOrigen" required aria-required="true" placeholder="Ej: Argentina">
+                        </div>
+                    </fieldset>
+                    <button type="submit" class="btn-primary">Validar y Continuar</button>
+                </form>
             </section>
+
+            <section id="admin-validar" class="module hidden">
+                <h2>Validar Formularios Pendientes</h2>
+                <div class="alert alert-info" role="alert">
+                    <p>Bandeja de entrada para revisión de trámites de viaje, vehículos y SAG.</p>
+                </div>
+                <div class="table-responsive">
+                    <table class="status-table">
+                        <caption class="sr-only">Formularios pendientes de validación</caption>
+                        <thead>
+                            <tr>
+                                <th>Usuario (RUT)</th>
+                                <th>Tipo de Trámite</th>
+                                <th>Fecha</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>19.876.543-2</td>
+                                <td>Declaración SAG</td>
+                                <td>18/06/2026</td>
+                                <td><button class="btn-secondary" style="padding: 0.3rem 0.8rem;">Revisar</button></td>
+                            </tr>
+                            <tr>
+                                <td>15.432.198-K</td>
+                                <td>Salida Vehículo</td>
+                                <td>18/06/2026</td>
+                                <td><button class="btn-secondary" style="padding: 0.3rem 0.8rem;">Revisar</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="admin-permisos" class="module hidden">
+                <h2>Control de Permisos de Acceso</h2>
+                <form class="legal-form" id="form-permisos">
+                    <fieldset>
+                        <legend>Gestión de Usuarios del Sistema</legend>
+                        <div class="form-group">
+                            <label for="buscar-usuario">Buscar Usuario por RUT</label>
+                            <input type="text" id="buscar-usuario" name="buscarUsuario" placeholder="Ej: 12.345.678-9">
+                        </div>
+                        <div class="form-group">
+                            <label for="asignar-rol">Asignar Nuevo Rol</label>
+                            <select id="asignar-rol" name="asignarRol">
+                                <option value="user">Usuario</option>
+                                <option value="admin">Administrador</option>
+                                <option value="bloqueado">Cuenta Bloqueada</option>
+                            </select>
+                        </div>
+                    </fieldset>
+                    <button type="button" class="btn-primary">Actualizar Permisos</button>
+                </form>
+            </section>
+
         </main>
     </div>
 
